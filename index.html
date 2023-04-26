@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="http://unpkg.com/layui@2.7.6/dist/css/layui.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.js"></script>
+
+    <script src="https://unpkg.com/layui@2.7.6/dist/layui.js"></script>
+    <style>
+      #main {
+        margin: 100px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="layui-btn">小侯</button>
+    <button class="layui-btn">小静</button>
+    <button class="layui-btn">小怡</button>
+    <div id="main" style="width: 600px; height: 400px"></div>
+    <script src="./echarts.js"></script>
+    <script>
+      var date = [4.1, 4.7, 4.14, 4.21];
+      var data = [
+        {
+          name: "小侯",
+          score: [
+            { jishi: 100, bishi: 0 },
+            { jishi: 90, bishi: 20 },
+            { jishi: 80, bishi: 0 },
+            { jishi: 70, bishi: 40 },
+          ],
+        },
+        {
+          name: "小静",
+          score: [
+            { jishi: 88, bishi: 0 },
+            { jishi: 92, bishi: 28 },
+            { jishi: 85, bishi: 0 },
+            { jishi: 69, bishi: 44 },
+          ],
+        },
+        {
+          name: "小怡",
+          score: [
+            { jishi: 62, bishi: 0 },
+            { jishi: 80, bishi: 20 },
+            { jishi: 55, bishi: 0 },
+            { jishi: 78, bishi: 22 },
+          ],
+        },
+      ];
+      /* arr.forEach((item, index) => {
+                     a = item.jishi;
+                     console.log(a);
+                     //b = item.bishi;
+                     //console.log(b);
+                     let aa = Array.from(a);
+                     console.log(aa);
+                   }); */
+
+      // 获取按钮元素
+      var buttons = $(".layui-btn");
+      // 绑定点击事件
+      buttons.on("click", function () {
+        // 获取当前点击的按钮索引
+        var index = $(this).index();
+        // 根据索引取出对应人员的成绩数据
+        var personData = data[index].score;
+        // 提取机试和笔试分数
+        var jishiArray = personData.map(function (item) {
+          return item.jishi;
+        });
+        var bishiArray = personData.map(function (item) {
+          return item.bishi;
+        });
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById("main"));
+
+        // 指定图表的配置项和数据
+        var option = {
+          color: ["#fb8b05"], //全部设置
+          title: {
+            text: "成绩示例",
+          },
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "shadow",
+            },
+            formatter: function (params) {
+              let jishi = params[0];
+              let bishi = params[1];
+              return (
+                "成绩详情：" +
+                "<br/>" +
+                jishi.seriesName +
+                ":" +
+                jishi.value +
+                "<br/>" +
+                bishi.seriesName +
+                ":" +
+                bishi.value
+              );
+            },
+          },
+          legend: {
+            data: ["机试", "笔试"],
+          },
+          xAxis: {
+            data: date,
+          },
+          yAxis: {},
+          series: [
+            /*  {
+                     label: {
+                       show: true,
+                       position: "top",
+                     },
+                   }, */
+            {
+              itemStyle: {
+                normal: {
+                  color: function (params) {
+                    if (params.data < 30) {
+                      return "red";
+                    } else {
+                      return "#fb8b05"; // 柱子颜色
+                    }
+                  },
+                },
+              },
+              name: "机试",
+              type: "bar",
+              label: {
+                show: true,
+                position: "top",
+              },
+              data: jishiArray,
+            },
+            {
+              itemStyle: {
+                normal: {
+                  color: function (params) {
+                    if (params.data < 30) {
+                      return "red";
+                    } else {
+                      return "#f9f4dc"; // 柱子颜色
+                    }
+                  },
+                },
+              },
+              name: "笔试",
+              type: "bar",
+              label: {
+                show: true,
+                position: "top",
+              },
+              data: bishiArray,
+            },
+          ],
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+      });
+    </script>
+  </body>
+</html>
